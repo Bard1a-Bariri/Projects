@@ -53,7 +53,7 @@ else:
     X = X.dropna()
     Y = Y.loc[X.index]
     
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, random_state=42)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, random_state=42, test_size = 0.2)
 
     if model_type == "number":
         model = RandomForestRegressor(max_depth = 7, random_state = 42, n_estimators = 200)

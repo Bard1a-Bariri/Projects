@@ -1,4 +1,4 @@
-from weather_data.py import API
+#from weather_data.py import API
 import xgboost as xgb
 import json
 import streamlit as st
@@ -99,8 +99,8 @@ with st.sidebar.form('input_form'):
     location = st.text_input("What city do you live in?")
     destination = st.text_input("Destination:")
     dates = st.date_input("How long is your trip?", value=[])
-    people = st.number_input("How many people are traveling?")
-    budget = st.number_input("What is your maximum budget?")
+    people = st.number_input("How many people are traveling?", min_value=1, step=1, value=1)
+    budget = st.number_input("What is your maximum budget?", step=100, value=0)
     style = st.selectbox("What is your prefered travel style?", ["Budget / Backpacker", "Mid-Range / Comfort", "Luxury"])
 
     submit_button = st.form_submit_button(label="Generate Iterinary")

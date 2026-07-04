@@ -184,6 +184,7 @@ if st.session_state.itinerary_data is not None:
             })
         
         for idx, day_info in enumerate(itinerary_data['days']):
+            
             route_points.append({
                 "name": f"📍 Day {idx+1} Central Anchor",
                 "lat": day_info['lat'],

@@ -69,12 +69,12 @@ def generate_schedule(dates, destination, style):
                     "The 'flight_coordinates' key must be an object with four keys: 'departure_lat', 'departure_lon', 'arrival_lat', and 'arrival_lon'. "
                     "The 'days' key must be a list where each item represents a single day and has exactly "
                     "six keys: 'title', 'morning', 'afternoon', 'evening', 'lat', and 'lon'. "
+                    "CRITICAL GEOGRAPHY REQUIREMENT: The 'lat' and 'lon' for each day MUST be the exact, unique coordinates of that specific day's main attraction. Do NOT repeat the general city-center coordinates across multiple days. Every single day must have distinctly different coordinates.You MUST include every single key exactly as named. Do NOT omit 'lat' or 'lon' under any circumstances, even if you have to estimate the coordinates. Every single day object MUST contain exactly those six keys, no exceptions." "
                     "CRITICAL CONTENT REQUIREMENT: The descriptions for 'morning', 'afternoon', and 'evening' must be deep, complex, and immersive, including specific travel paths(bus numbers, streets, etc) "
                     "(at least 3-4 dense sentences each). Include highly specific landmark names, neighborhoods, recommended local foods or dishes "
                     "matching the requested travel style, realistic cultural context, and practical navigation tips (e.g., specific train lines or walking paths). "
                     "Avoid generic phrases like 'explore the area' or 'find a local eatery'—name actual types of locations, culinary specialties, and experiential details. "
                     "Do not include any normal conversational text outside this raw JSON object structure."
-
                 )
             },
             {"role": "user", "content": prompt}
@@ -182,6 +182,8 @@ if st.session_state.itinerary_data is not None:
             "lon": flight_coords['departure_lon'], 
             "info": f"Departure from {st.session_state.user_location}"
             })
+
+            
         
         for idx, day_info in enumerate(itinerary_data['days']):
             

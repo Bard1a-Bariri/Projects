@@ -182,7 +182,7 @@ if st.session_state.itinerary_data is not None:
         st.divider()
     
         def create_pdf(data):
-            pdf = FPDF()
+            pdf = FPDF.FPDF()
             pdf.add_page()
             
             def sanitize_text(text):

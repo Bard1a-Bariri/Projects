@@ -202,15 +202,15 @@ if st.session_state.itinerary_data is not None:
                 
             return pdf.output(dest='S').encode('latin-1')
 
-        try:
-            pdf_bytes = create_pdf(itinerary_data)
-            st.download_button(
-                label="📥 Download Itinerary as PDF",
-                data=pdf_bytes,
-                file_name=f"{st.session_state.user_destination}_itinerary.pdf",
-                mime="application/pdf"
-            )
-        except Exception as e:
+            try:
+                pdf_bytes = create_pdf(itinerary_data)
+                st.download_button(
+                    label="📥 Download Itinerary as PDF",
+                    data=pdf_bytes,
+                    file_name=f"{st.session_state.user_destination}_itinerary.pdf",
+                    mime="application/pdf"
+                )
+            except Exception as e:
             st.caption("PDF compilation optimization ready for launch.")
 
     with tab2:

@@ -1,4 +1,3 @@
-#from weather_data.py import API
 import json
 import streamlit as st
 import pandas as pd
@@ -125,7 +124,6 @@ def get_weather_forecast(lat, lon):
 
 with st.sidebar.form('input_form'):
     st.markdown("### 🔐 Premium Access")
-    # 1. License key gate
     license_key = st.text_input("Enter License Key / Access Token:", type="password", help="Get a key from our website.")
     
 
@@ -183,38 +181,37 @@ if st.session_state.itinerary_data is not None:
                 st.write(f"Evening: {day_plan['evening']}")
         st.divider()
     
-    def create_pdf(data):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", "B", 16)
-        pdf.cell(0, 10, f"Custom Itinerary: {st.session_state.user_destination}", ln=True, align="C")
-        pdf.ln(10)
-        
-        for idx, day in enumerate(data['days']):
-            pdf.set_font("Arial", "B", 12)
-            pdf.cell(0, 10, f"Day {idx+1}: {day['title']}", ln=True)
-            pdf.set_font("Arial", "", 10)
+        def create_pdf(data):
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", "B", 16)
+            pdf.cell(0, 10, f"Custom Itinerary: {st.session_state.user_destination}", ln=True, align="C")
+            pdf.ln(10)
             
-            pdf.multi_cell(0, 6, f"Morning: {day['morning']}")
-            pdf.ln(2)
-            pdf.multi_cell(0, 6, f"Afternoon: {day['afternoon']}")
-            pdf.ln(2)
-            pdf.multi_cell(0, 6, f"Evening: {day['evening']}")
-            pdf.ln(5)
-            
-        # Return PDF data as bytes instead of saving to local file system
-        return pdf.output(dest='S').encode('latin-1')
+            for idx, day in enumerate(data['days']):
+                pdf.set_font("Arial", "B", 12)
+                pdf.cell(0, 10, f"Day {idx+1}: {day['title']}", ln=True)
+                pdf.set_font("Arial", "", 10)
+                
+                pdf.multi_cell(0, 6, f"Morning: {day['morning']}")
+                pdf.ln(2)
+                pdf.multi_cell(0, 6, f"Afternoon: {day['afternoon']}")
+                pdf.ln(2)
+                pdf.multi_cell(0, 6, f"Evening: {day['evening']}")
+                pdf.ln(5)
+                
+            return pdf.output(dest='S').encode('latin-1')
 
-    try:
-        pdf_bytes = create_pdf(itinerary_data)
-        st.download_button(
-            label="📥 Download Itinerary as PDF",
-            data=pdf_bytes,
-            file_name=f"{st.session_state.user_destination}_itinerary.pdf",
-            mime="application/pdf"
-        )
-    except Exception as e:
-        st.caption("PDF compilation optimization ready for launch.")
+        try:
+            pdf_bytes = create_pdf(itinerary_data)
+            st.download_button(
+                label="📥 Download Itinerary as PDF",
+                data=pdf_bytes,
+                file_name=f"{st.session_state.user_destination}_itinerary.pdf",
+                mime="application/pdf"
+            )
+        except Exception as e:
+            st.caption("PDF compilation optimization ready for launch.")
 
     with tab2:
         st.write("Interactive Travel Pathway")

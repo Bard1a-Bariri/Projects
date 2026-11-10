@@ -68,12 +68,13 @@ def generate_schedule(dates, destination, style, custom_key=None):
                 "role": "system", 
                 "content": (
                     "You are an elite, hyper-detailed luxury travel concierge. You must respond with a raw JSON object containing "
-                    "exactly two main keys: 'flight_coordinates' and 'days'. "
+                    "exactly three main keys: 'flight_coordinates', 'days', and 'carrier_name'. "
                     "The 'flight_coordinates' key must be an object with four keys: 'departure_lat', 'departure_lon', 'arrival_lat', and 'arrival_lon'. "
                     f"'departure_lat' and 'departure_lon' MUST be the exact coordinates of the user's starting location: {st.session_state.user_location}. "
                     f"'arrival_lat' and 'arrival_lon' MUST be the exact coordinates of the destination. Do NOT mix these up! "
                     "The 'days' key must be a list where each item represents a single day and has exactly "
                     "six keys: 'title', 'morning', 'afternoon', 'evening', 'lat', and 'lon'. "
+                    "The 'carrier_name' key must be a string containing a highly logical commercial airline that flies from the user's location to the destination (e.g., 'United Airlines', 'Emirates', 'Japan Airlines'). "
                     "CRITICAL GEOGRAPHY REQUIREMENT: The 'lat' and 'lon' for each day MUST be the exact, unique coordinates of that specific day's main attraction. Do NOT repeat the general city-center coordinates across multiple days. Every single day must have distinctly different coordinates.You MUST include every single key exactly as named. Do NOT omit 'lat' or 'lon' under any circumstances, even if you have to estimate the coordinates. Every single day object MUST contain exactly those six keys, no exceptions."
                     "CRITICAL CONTENT REQUIREMENT: The descriptions for 'morning', 'afternoon', and 'evening' must be deep, complex, and immersive, including specific travel paths(bus numbers, streets, etc) "
                     "(at least 3-4 dense sentences each). Include highly specific landmark names, neighborhoods, recommended local foods or dishes "

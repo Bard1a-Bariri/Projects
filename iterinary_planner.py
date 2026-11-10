@@ -125,8 +125,6 @@ with st.sidebar.form('input_form'):
     # 1. License key gate
     license_key = st.text_input("Enter License Key / Access Token:", type="password", help="Get a key from our website.")
     
-    # 2. Zero-overhead API Key input
-    user_api_key = st.text_input("Enter your OpenRouter API Key:", type="password", help="Keep this blank to use default trial keys.")
 
     location = st.text_input("What city do you live in?", key="user_location")
     destination = st.text_input("Destination:", key="user_destination")

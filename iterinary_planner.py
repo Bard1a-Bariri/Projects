@@ -10,6 +10,8 @@ from streamlit_folium import st_folium
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
+import fpdf as FPDF
+import io
 
 st.set_page_config(layout="wide")
 st.title("Iterinary Planner")

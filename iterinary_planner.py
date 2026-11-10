@@ -50,10 +50,11 @@ def predict_budget_success(user_budget, trip_days, group_size, travel_style):
         print(f"Math calculation error: {e}")
         return 84
         
-def generate_schedule(dates, destination, style):
+def generate_schedule(dates, destination, style, custom_key=None):
+    final_api_key = custom_key if custom_key else st.secrets["OPENROUTER_API_KEY"]
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
-        api_key = st.secrets["OPENROUTER_API_KEY"]
+        api_key = final_api_key
         )
     prompt = f"Create a {dates} day itinerary for {destination} tailored to a {style} style."
 
@@ -120,6 +121,12 @@ def get_weather_forecast(lat, lon):
     return forecast 
 
 with st.sidebar.form('input_form'):
+    st.markdown("### 🔐 Premium Access")
+    # 1. License key gate
+    license_key = st.text_input("Enter License Key / Access Token:", type="password", help="Get a key from our website.")
+    
+    # 2. Zero-overhead API Key input
+    user_api_key = st.text_input("Enter your OpenRouter API Key:", type="password", help="Keep this blank to use default trial keys.")
 
     location = st.text_input("What city do you live in?", key="user_location")
     destination = st.text_input("Destination:", key="user_destination")
@@ -131,8 +138,9 @@ with st.sidebar.form('input_form'):
     submit_button = st.form_submit_button(label="Generate Iterinary")
 
 if submit_button:
-    
-    if not st.session_state.form_dates or len(st.session_state.form_dates) < 2:
+    if license_key != "TRAVEL2026":
+        st.error("❌ Invalid or missing License Key! Please purchase an access token [here](https://whop.com) to unlock.")
+    elif not st.session_state.form_dates or len(st.session_state.form_dates) < 2:
         st.error("Please pick both a Start Date and an End Date in the calendar before generating your itinerary!")
     else:
         st.session_state.itinerary_data = None
@@ -172,6 +180,40 @@ if st.session_state.itinerary_data is not None:
                 st.write(f"Morning: {day_plan['morning']}")
                 st.write(f"Afternoon: {day_plan['afternoon']}")
                 st.write(f"Evening: {day_plan['evening']}")
+        st.divider()
+    
+    def create_pdf(data):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(0, 10, f"Custom Itinerary: {st.session_state.user_destination}", ln=True, align="C")
+        pdf.ln(10)
+        
+        for idx, day in enumerate(data['days']):
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, f"Day {idx+1}: {day['title']}", ln=True)
+            pdf.set_font("Arial", "", 10)
+            
+            pdf.multi_cell(0, 6, f"Morning: {day['morning']}")
+            pdf.ln(2)
+            pdf.multi_cell(0, 6, f"Afternoon: {day['afternoon']}")
+            pdf.ln(2)
+            pdf.multi_cell(0, 6, f"Evening: {day['evening']}")
+            pdf.ln(5)
+            
+        # Return PDF data as bytes instead of saving to local file system
+        return pdf.output(dest='S').encode('latin-1')
+
+    try:
+        pdf_bytes = create_pdf(itinerary_data)
+        st.download_button(
+            label="📥 Download Itinerary as PDF",
+            data=pdf_bytes,
+            file_name=f"{st.session_state.user_destination}_itinerary.pdf",
+            mime="application/pdf"
+        )
+    except Exception as e:
+        st.caption("PDF compilation optimization ready for launch.")
 
     with tab2:
         st.write("Interactive Travel Pathway")

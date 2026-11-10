@@ -184,34 +184,49 @@ if st.session_state.itinerary_data is not None:
         def create_pdf(data):
             pdf = FPDF()
             pdf.add_page()
+            
+            def sanitize_text(text):
+                if not text:
+                    return ""
+                text = text.replace("—", "-").replace("–", "-").replace('“', '"').replace('”', '"').replace("‘", "'").replace("’", "'")
+                return "".join(c for c in text if 32 <= ord(c) < 127 or c == '\n')
+
             pdf.set_font("Arial", "B", 16)
-            pdf.cell(0, 10, f"Custom Itinerary: {st.session_state.user_destination}", ln=True, align="C")
+            dest_name = sanitize_text(st.session_state.user_destination)
+            pdf.cell(0, 10, f"Custom Itinerary: {dest_name}", ln=True, align="C")
             pdf.ln(10)
             
             for idx, day in enumerate(data['days']):
                 pdf.set_font("Arial", "B", 12)
-                pdf.cell(0, 10, f"Day {idx+1}: {day['title']}", ln=True)
+                day_title = sanitize_text(day['title'])
+                pdf.cell(0, 10, f"Day {idx+1}: {day_title}", ln=True)
                 pdf.set_font("Arial", "", 10)
                 
-                pdf.multi_cell(0, 6, f"Morning: {day['morning']}")
+                pdf.multi_cell(0, 6, f"Morning: {sanitize_text(day['morning'])}")
                 pdf.ln(2)
-                pdf.multi_cell(0, 6, f"Afternoon: {day['afternoon']}")
+                pdf.multi_cell(0, 6, f"Afternoon: {sanitize_text(day['afternoon'])}")
                 pdf.ln(2)
-                pdf.multi_cell(0, 6, f"Evening: {day['evening']}")
+                pdf.multi_cell(0, 6, f"Evening: {sanitize_text(day['evening'])}")
                 pdf.ln(5)
                 
-            return pdf.output(dest='S').encode('latin-1')
+            pdf_output = pdf.output(dest='S')
+            if isinstance(pdf_output, str):
+                return pdf_output.encode('latin-1', errors='ignore')
+            return bytes(pdf_output)
 
-            try:
-                pdf_bytes = create_pdf(itinerary_data)
-                st.download_button(
-                    label="📥 Download Itinerary as PDF",
-                    data=pdf_bytes,
-                    file_name=f"{st.session_state.user_destination}_itinerary.pdf",
-                    mime="application/pdf"
-                )
-            except Exception as e:
-            st.caption("PDF compilation optimization ready for launch.")
+        # 2. RUN the code and show the button (Shifted left / out of the function)
+        try:
+            pdf_bytes = create_pdf(itinerary_data)
+            st.download_button(
+                label="📥 Download Itinerary as PDF",
+                data=pdf_bytes,
+                file_name=f"{st.session_state.user_destination}_itinerary.pdf",
+                mime="application/pdf"
+            )
+        except Exception as e:
+            st.error(f"Actual PDF Error: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
 
     with tab2:
         st.write("Interactive Travel Pathway")

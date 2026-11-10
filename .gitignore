@@ -1,0 +1,9 @@
+# Ignore compressed dataset archives
+*.tgz
+*.zip
+*.tar.gz
+
+# Ignore dataset folders
+data/
+flowers-102/
+102flowers/

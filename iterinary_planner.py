@@ -170,7 +170,7 @@ if st.session_state.itinerary_data is not None:
     ai_lat = flight_coords['arrival_lat']
     ai_lon = flight_coords['arrival_lon']
 
-    carrier_name = "Delta Air lines"
+    carrier = itinerary_data.get('carrier_name', 'Major Commercial Airline')
 
     with tab1:
         st.write("Personalized travel plan:")
@@ -222,7 +222,7 @@ if st.session_state.itinerary_data is not None:
         route_points = []
 
         route_points.append({
-            "name": f"🛫 {carrier_name} Flight",
+            "name": f"🛫 {carrier} Flight",
             "lat": flight_coords['departure_lat'], 
             "lon": flight_coords['departure_lon'], 
             "info": f"Departure from {st.session_state.user_location}"
